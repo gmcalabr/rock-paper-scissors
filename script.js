@@ -1,18 +1,4 @@
-// NOTES/TODO
-//     XXX 1. fix the possible 5 ties game tie Scenario 
-//     XXX 2. Reorganize functions more logically
-//     XXX 3. Rename all variables inside functions based only on local function 
-//     XXX 4. Clean/finish all comments
-//     XXX 5. Implement setting score to zero
-//     XXX 6. Clean DEBUG log lines
-//     XXX 7. Create function to redeclare variables
-//     XXX 8. Make "you" and "human" consistent (call the user human).
-//     9. Add a total game counter at the end of each round and the end of all games
-//     XXX 10. Relocate the Console log functions for ----- and Round number X
-//     XXX 11. Make all lines end in ;
-//     12. DEBUG SCORES ISSUES
-
-// ROCK PAPER SCISSORS in CONSOLE
+// ROCK PAPER SCISSORS, BROWSER CONSOLE EDITION
 
 // Start game with 0, 0, declare global variables
 var computerPoints = 0;
@@ -33,17 +19,22 @@ while (notDoneYet) {
     }
         // Calculate game score and ask for replay
         gameFinalScore();
-        console.log("Total games score: The human has ", humanPoints, " points. The computer has ", computerPoints, " points.");
+        console.log("--------------------------------------------");
+        console.log("--------------------------------------------");
+        console.log("--------------------------------------------");
+
+        // Ask if user wants to play another game
         if (confirm("Would the human like to play another round?")) {
             resetGame();
-            console.log("Great, let's play another. 0 - 0");
+            console.log("Great, let's play another. It's ", humanWins, " - ", computerWins);
             totalGamesPlayed = totalGamesPlayed + 1;
         } else {
             notDoneYet = false;
             totalGamesPlayed = totalGamesPlayed +1;
             console.log("Thanks for playing!");
-            console.log("The human has played a total of ", totalGamesPlayed ,"game(s).");
-            console.log("The human has won ", humanWins, " total games and the computer has won ", computerWins, " total games.")
+            console.log("The human played ", totalGamesPlayed ,"game(s).");
+            console.log("The human won ", humanWins, " games.");
+            console.log("The computer won ", computerWins, " games.")
         }
 }
 
@@ -66,6 +57,11 @@ function playRound() {
 
     // Compare player hands and report
     let roundPoint = determineRoundWinner(humanChoice, computerChoice);
+
+    // Generate a message to tell player that X beats Y hand
+    roundCompareMessage(humanChoice, computerChoice, roundPoint);
+
+    // Change the scoreboard and report
     scoreChange(roundPoint);
     console.log("~~~~~Current Score");
     console.log("Human: ", humanPoints);
@@ -137,6 +133,27 @@ function determineRoundWinner(humanChoice, computerChoice) {
     }
 }
 
+// Generate a nice "X beats Y" message
+function roundCompareMessage(humanChoice, computerChoice, roundPoint) {
+
+    // Write the message based on hand
+    if (roundPoint = 1 && humanChoice == "rock") {
+        console.log("Rock crushes Scissors");
+    } else if (roundPoint = -1 && computerChoice == "rock") {
+        console.log("Rock crushes Scissors");
+    } else if (roundPoint = 1 && humanChoice == "paper") {
+        console.log("Paper covers Rock");
+    } else if (roundPoint = -1 && computerChoice == "paper") {
+        console.log("Paper covers Rock");
+    } else if (roundPoint = 1 && humanChoice == "scissors") {
+        console.log("Scissors cuts Paper");
+    } else if (roundPoint = -1 && computerChoice == "scissors") {
+        console.log("Scissors cuts Paper");
+    } else {
+        console.log(humanChoice, " ties ", computerChoice);
+    }
+}
+
 // Score adder
 function scoreChange(roundPoint) {
     roundNumber = roundNumber + 1;
@@ -156,7 +173,9 @@ function scoreChange(roundPoint) {
 function gameFinalScore() {
 
     // Declare game finals
-    console.log("~~~~~The game is over. ~~~~~ The score is... ~~~~~");
+    console.log("--------------------------------------------");
+    console.log("~~~~~The game is over. ~~~~~ The score is ~~~~~");
+
     console.log("Computer: ", computerPoints);
     console.log("Human: ", humanPoints);
 
