@@ -1,76 +1,143 @@
+// NOTES/TODO
+//     XXX 1. fix the possible 5 ties game tie Scenario 
+//     XXX 2. Reorganize functions more logically
+//     XXX 3. Rename all variables inside functions based only on local function 
+//     XXX 4. Clean/finish all comments
+//     XXX 5. Implement setting score to zero
+//     XXX 6. Clean DEBUG log lines
+//     XXX 7. Create function to redeclare variables
+//     XXX 8. Make "you" and "human" consistent (call the user human).
+//     9. Add a total game counter at the end of each round and the end of all games
+//     XXX 10. Relocate the Console log functions for ----- and Round number X
+//     XXX 11. Make all lines end in ;
+//     12. DEBUG SCORES ISSUES
+
 // ROCK PAPER SCISSORS in CONSOLE
 
 // Start game with 0, 0, declare global variables
 var computerPoints = 0;
 var humanPoints = 0;
 var roundNumber = 1;
+var notDoneYet = true;
+var totalGamesPlayed = 0;
+var humanWins = 0;
+var computerWins = 0;
 
-while (roundNumber < 6) {
-    playRound();
+// Game Loop
+while (notDoneYet) {
+    // Loop for 5 rounds
+    while (roundNumber < 6) {
+        console.log("--------------------------------------------");
+        console.log("~~~~~Round number ",roundNumber);
+        playRound();
+    }
+        // Calculate game score and ask for replay
+        gameFinalScore();
+        console.log("Total games score: The human has ", humanPoints, " points. The computer has ", computerPoints, " points.");
+        if (confirm("Would the human like to play another round?")) {
+            resetGame();
+            console.log("Great, let's play another. 0 - 0");
+            totalGamesPlayed = totalGamesPlayed + 1;
+        } else {
+            notDoneYet = false;
+            totalGamesPlayed = totalGamesPlayed +1;
+            console.log("Thanks for playing!");
+            console.log("The human has played a total of ", totalGamesPlayed ,"game(s).");
+            console.log("The human has won ", humanWins, " total games and the computer has won ", computerWins, " total games.")
+        }
 }
-    gameFinalScore();
-// CODE ENDS HERE
 
+// Game Ends Here
 
-
-
-    
 // functions!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-// Root function to play a round
+// Main Round Play Function
 function playRound() {
+
     // Collect the human player's choice
     let humanChoice = "0";
     humanChoice = getHumanChoice();
-
-    console.log("DEBUG Testing step 2: human choice");
-    console.log("DEBUG Your choice is: ", humanChoice); 
+    console.log("The human chose: ", humanChoice);
 
     // Calculate the computer player's choice
     let computerChoice = "0";
     computerChoice = getComputerChoice();
+    console.log("The computer chose: ", computerChoice);
 
-    console.log("DEBUG Testing step 1: computer choice");
-    console.log("DEBUG computer chooses: ", computerChoice);
-
-    // Run function to compare choices
+    // Compare player hands and report
     let roundPoint = determineRoundWinner(humanChoice, computerChoice);
-    console.log("DEBUG roundPoint : ",roundPoint);
-    scoreChange(roundPoint)
-    console.log("Current Score")
+    scoreChange(roundPoint);
+    console.log("~~~~~Current Score");
     console.log("Human: ", humanPoints);
     console.log("Computer: ", computerPoints);
     return
 }
 
-// Main function to select winner of a round
+// Poll human for RPS choice
+function getHumanChoice() {
+    // Declare local variables
+    let hand = "0";
+    let keepGoing = true;
+
+    // loop to prompt for user's input
+    while (keepGoing) {
+
+        hand = prompt("Let's play! Please enter: Rock, Paper, or Scissors");
+        hand = hand.toLowerCase();
+
+        //check input
+        if (hand === "rock" || hand === "paper" || hand === "scissors") {
+            keepGoing = false;
+            return hand;
+        } else {
+            hand = alert("The human has entered their choice incorrectly. The human must enter either Rock, Paper, or Scissors");
+        }
+    }
+}
+
+// Generate computer's RPS choice
+function getComputerChoice() {
+    
+    // Declare variables
+    let hand = "0";
+    let randomOneToThree = 0;
+    
+    // Create a random number from 1-3
+    randomOneToThree = Math.ceil(Math.random() * 3);
+    
+    // Assign that randomOneToThree to a choice, Rock, Paper, Scissors
+    if (randomOneToThree === 1) {
+        hand = "rock";
+    } else if (randomOneToThree === 2) {
+        hand = "paper";
+    } else if (randomOneToThree === 3) {
+        hand = "scissors";
+    } else {
+        console.log("ERROR, cpuChoiceNum is out of range");
+        console.log("cpuChoiceNum = ${cpuChoiceNum}");
+    }
+
+    return hand;
+}
+
+// Select Round winner
 function determineRoundWinner(humanChoice, computerChoice) {
+    // Calculate who won and assign 0 (tie), 1 (human win), or -1 (computer win)
     if (humanChoice == computerChoice) {
+        console.log("Tie round")
         return 0;
     } else if ((humanChoice == "rock" && computerChoice == "scissors") || 
                (humanChoice == "paper" && computerChoice == "rock") || 
                (humanChoice == "scissors" && computerChoice == "paper")) {
+        console.log("Human wins")
         return 1;
     } else {
+        console.log("Computer wins")
         return -1;
     }
 }
 
-// Main function to calculate and display the winner @EoG
-function gameFinalScore() {
-    console.log("The game is over. The score is...");
-    console.log("Computer: ", computerPoints);
-    console.log("Human: ", humanPoints);
-    if (computerPoints === humanPoints) {
-        console.log("It is a Tie");
-    } else if (computerPoints > humanPoints) {
-        console.log("The computer has won");
-    } else {
-        console.log("You have won");
-    }
-}
-
-// Function for handling scores
+// Score adder
 function scoreChange(roundPoint) {
     roundNumber = roundNumber + 1;
     //if roundPoints is 0, output existing score
@@ -85,65 +152,34 @@ function scoreChange(roundPoint) {
     }
 }
 
-// Main Function to get the human player's choice
-function getHumanChoice() {
+// Calculate/display End of Game Score
+function gameFinalScore() {
 
-    let humanChoice = "0";
-    let keepGoing = true;
+    // Declare game finals
+    console.log("~~~~~The game is over. ~~~~~ The score is... ~~~~~");
+    console.log("Computer: ", computerPoints);
+    console.log("Human: ", humanPoints);
 
-    while (keepGoing) {
-        console.log("--------------------------------------------");
-        console.log("Round number ",roundNumber);
-        humanChoice = prompt("Let's play! Please enter: Rock, Paper, or Scissors");
-        humanChoice = humanChoice.toLowerCase();
-
-        if (humanChoice === "rock" || humanChoice === "paper" || humanChoice === "scissors") {
-            keepGoing = false;
-            return humanChoice;
-        } else {
-            humanChoice = alert("You have entered your choice incorrectly. You must enter either Rock, Paper, or Scissors");
-        }
-    }
-}
-
-// Main Function to get a computer's RPS choice getComputerChoice
-function getComputerChoice() {
-    
-    // Create a random number from 1-3
-    let cpuChoiceNum = 0;
-    cpuChoiceNum = randomOneThree();
-    
-    // Assign that number to a choice, Rock, Paper, Scissors
-    let computerChoice = "0";
-    computerChoice = convertNumRPSStr(cpuChoiceNum);
-
-    return computerChoice;
-}
-
-// Sub Function to create a random number from 1-3
-function randomOneThree() {
-    let randomNum = 0;
-    randomNum = Math.ceil(Math.random() * 3);
-    return randomNum;
-}
-
-// Sub Function to convert a random number from 1-3 to Rock, Paper, or Scissors
-function convertNumRPSStr(cpuChoiceNum) {
-    if (cpuChoiceNum === 1) {
-        computerChoice = "rock"
-    } else if (cpuChoiceNum === 2) {
-        computerChoice = "paper"        
-    } else if (cpuChoiceNum === 3) {
-        computerChoice = "scissors"       
+    // If statement to output correct endgame description
+    if (computerPoints === humanPoints) {
+        console.log("It is a Tie");
+    } else if (computerPoints > humanPoints) {
+        console.log("The computer has won");
+        computerWins = computerWins + 1;
+    } else if (humanPoints > computerPoints) {
+        console.log("The human has won");
+        humanWins = humanWins + 1;
     } else {
-        console.log("ERROR, cpuChoiceNum is out of range")
-        console.log("cpuChoiceNum = ${cpuChoiceNum}")
+        console.log("There was a tie! There's only a 0.4% chance of that happening. Good thing I wrote this eventuality in or this computer would have just blown up.");
     }
-    return computerChoice;
 }
 
-// Function to Set Scores to zero
-function resetScore() {
+// Reet Game
+function resetGame() {
     computerPoints = 0;
     humanPoints = 0;
+    computerPoints = 0;
+    humanPoints = 0;
+    roundNumber = 1;
+    notDoneYet = true;
 }
