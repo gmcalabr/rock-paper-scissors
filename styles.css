@@ -1,0 +1,21 @@
+body {
+    background-color: black;
+    color: yellow;
+}
+
+#roundStatus {
+    background-color: green;
+}
+
+#dialog {
+    background-color: blue;    
+}
+
+#gameStatus {
+    background-color: red;
+}
+
+.restartButton {
+    background-color: green;
+    color: aquamarine;
+}

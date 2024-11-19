@@ -67,21 +67,8 @@ function getHumanChoice() {
     let hand = "0";
     let keepGoing = true;
 
-    // loop to prompt for user's input
-    while (keepGoing) {
-
-        hand = prompt("Let's play! Please enter: Rock, Paper, or Scissors");
-        hand = hand.toLowerCase();
-
-        //check input
-        if (hand === "rock" || hand === "paper" || hand === "scissors") {
-            keepGoing = false;
-        } else {
-            hand = alert("The human has entered their choice incorrectly. The human must enter either Rock, Paper, or Scissors");
-        }
-    }
-    // Deliver the user their choice
-    console.log("The human chose: ", hand);
+    // Wait for the user to click a button
+    
     return hand;
 }
 
