@@ -4,15 +4,24 @@ var roundNumber = 1;
 var totalGamesPlayed = 0;
 var humanWins = 0;
 var computerWins = 0;
+var gameTies = 0;
 
 document.addEventListener("DOMContentLoaded", restartGame());
 let menu = document.querySelector('#menu');
 
-menu.addEventListener('click', (event) => {
-    // Starts round computation from button click
+// Define the event handler as a named function
+const handleMenuClick = (event) => {
     let target = event.target.innerText;
     playRound(target);
-});
+};
+
+// Define the event handler as a named function
+const handleRestartClick = (event) => {
+    restartButtonClicked();
+};
+
+// Add the event listener to the menu buttons
+menu.addEventListener("click", handleMenuClick);
 
 function restartGame() {
     // restartGame() is used to zero out the variables at the beginning of page load/game restart
@@ -20,18 +29,6 @@ function restartGame() {
     computerPoints = 0;
     humanPoints = 0;
     roundNumber = 1;
-
-    // update gameStatus div
-
-    clearDialog("gameStatus");
-
-    if (totalGamesPlayed !== 0) {
-        const message1 = `Out of ${totalGamesPlayed} games, the score is:`;
-        const message2 = `Human: ${humanWins},    Computer: ${computerWins}`;
-        displayMessage(message1, "gameStatus");
-        displayMessage(message2, "gameStatus"); 
-    }
-
 };
 
 function playRound(humanChoice) {
@@ -61,9 +58,6 @@ function playRound(humanChoice) {
     if (roundNumber > 5) {
         endOfGame();
     }
-
-    //run restartGame() to reset scores and start another round
-    //clearDialog();
 };
 
 function getComputerChoice() {
@@ -148,33 +142,43 @@ function scoreChange(roundWinner) {
         computerPoints = computerPoints + 1;
     }
 
-    displayMessage(`Current Round Score: Human: ${humanPoints}, 
-        Computer: ${computerPoints}`, "roundStatus");
+    if (roundNumber == 6) {
+        displayMessage(`||| Round 5 ||| Human: ${humanPoints} -
+            Computer: ${computerPoints} |||`, "roundStatus");
+    } else {
+        displayMessage(`||| Round ${roundNumber} ||| Human: ${humanPoints} -
+            Computer: ${computerPoints} |||`, "roundStatus");
+    }
 
     return ;
 };
 
 function endOfGame() {
     // Main Function to end a 5 round game and choose restart
+
     //display end of game message and win counts
-    let EOGMessage1 = "The game is over";
-    let EOGMessage2 = "";
+    let message1 = "The game is over";
+    let message2 = "";
 
     if (humanPoints == computerPoints) {
-        EOGMessage2 = "You have tied the computer";
+        message2 = "You have tied the computer";
+        gameTies++
     } else if (humanPoints > computerPoints) {
-        EOGMessage2 = "You have won";
+        message2 = "You have won";
+        humanWins++
     } else {
-        EOGMessage2 = "You have lost";
+        message2 = "You have lost";
+        computerWins++
     };
 
-    displayMessage(EOGMessage1, "gameStatus");
-    displayMessage(EOGMessage2, "gameStatus");
+    displayMessage(message1, "roundStatus");
+    displayMessage(message2, "roundStatus");
 
-    createRestartButton();
+    // Remove addEventListener from menu
+    menu.removeEventListener("click", handleMenuClick);
 
-    //if yes trigger reset function to wipe dialog
-    //print current game wins to dialog
+    //add button for playNewGame to gameStatus and event listener
+    addRestartButton();
 };
 
 function displayMessage(messageText, location) {
@@ -200,24 +204,50 @@ function clearDialog(location) {
     main.appendChild(newMessageDiv);
 };
 
-function createRestartButton() {
+function addRestartButton() {
     // Creates and appends a button that restarts the game
     const messageDiv = document.querySelector("#gameStatus");
-
     const restartButton = document.createElement("button");
+
     restartButton.textContent = "Click here to play another game";
     restartButton.style = "color: green;";
+    restartButton.id = "restartButton";
     messageDiv.appendChild(restartButton);
 
-    // temporarily disable RPS buttons
-    removeEventListener('click');
+    // add event listener to restartButton
+    // Define the event handler as a named function
+    const handleRestartClick = (event) => {
+        restartButtonClicked();
+    };
 
-    // enable restartButton
-    // menu.addEventListener('click', (event) => {
-    //     // Starts round computation from button click
-    //     let target = event.target.innerText;
-    //     playRound(target);
-    // });
-    // run next function
+    // Add the event listener to the menu buttons
+    restartButton.addEventListener("click", handleRestartClick);
+};
 
+function restartButtonClicked() {
+    // remove event listener from restart button
+    const restartButton = document.querySelector("#restartButton")
+    restartButton.removeEventListener("click", handleRestartClick);
+
+    // clear red green blue sections 
+    clearDialog("gameStatus");
+    clearDialog("roundStatus");
+    clearDialog("dialog");    
+
+    // print games score to red 
+    let message1 = `Games played: ${totalGamesPlayed}`;
+    let message2 = `The Human has won ${humanWins}`;
+    let message3 = `The computer has won ${computerWins}`;
+    let message4 = `The number of tie games: ${gameTies}`;
+
+    displayMessage(message1, "gameStatus");
+    displayMessage(message2, "gameStatus");
+    displayMessage(message3, "gameStatus");
+    displayMessage(message4, "gameStatus");
+    
+    // add event listener to menu
+    menu.addEventListener("click", handleMenuClick);
+
+    // reset round numbers
+    restartGame();
 };
